@@ -21,6 +21,7 @@ package org.apache.jmeter.exceptions;
  */
 public class IllegalUserActionException extends Exception {
     private static final long serialVersionUID = 240L;
+    //定义一个唯一的常量
 
     /**
      * @deprecated - use IllegalUserActionException(String)
@@ -28,10 +29,14 @@ public class IllegalUserActionException extends Exception {
     @Deprecated // Needed for serialisation testing
     public IllegalUserActionException() {
         super();
+        //调用父类Exception的构造函数
+
     }
 
     public IllegalUserActionException(String name) {
         super(name);
+        //调用父类Exception的构造函数
+
     }
 
     public IllegalUserActionException(String name, Throwable t) {

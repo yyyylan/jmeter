@@ -441,7 +441,9 @@ public class JMeter implements JMeterPlugin {
      */
     public void start(String[] args) {
         CLArgsParser parser = new CLArgsParser(args, options);
+        //创建解析器处理选项并解析某些参数
         String error = parser.getErrorString();
+        //返回解析中的错误
         if (error == null){// Check option combinations
             boolean gui = parser.getArgumentById(NONGUI_OPT)==null;
             boolean nonGuiOnly = parser.getArgumentById(REMOTE_OPT)!=null
@@ -452,6 +454,7 @@ public class JMeter implements JMeterPlugin {
             }
         }
         if (null != error) {
+            //发生错误时返回信息
             System.err.println("Error: " + error);//NOSONAR
             System.out.println("Usage");//NOSONAR
             System.out.println(CLUtil.describeOptions(options).toString());//NOSONAR
@@ -544,6 +547,7 @@ public class JMeter implements JMeterPlugin {
                     ReportGenerator generator = new ReportGenerator(reportFile, null);
                     generator.generate();
                 } else if (parser.getArgumentById(NONGUI_OPT) == null) { // not non-GUI => GUI
+                    //gui模式
                     startGui(testFile);
                     startOptionalServers();
                 } else { // NON-GUI must be true
@@ -563,6 +567,7 @@ public class JMeter implements JMeterPlugin {
                         throw new IllegalUserActionException(
                                 "Option -"+ ((char)REPORT_AT_END_OPT)+" requires -"+((char)LOGFILE_OPT )+ " option");
                     }
+                    //非gui模式
                     startNonGui(testFile, jtlFile, remoteTest, reportAtEndOpt != null);
                     startOptionalServers();
                 }
@@ -785,9 +790,9 @@ public class JMeter implements JMeterPlugin {
         }
     }
 
-    private void initializeProperties(CLArgsParser parser) {
+    private void initializeProperties(CLArgsParser parser) {//初始化
         if (parser.getArgumentById(PROPFILE_OPT) != null) {
-            JMeterUtils.loadJMeterProperties(parser.getArgumentById(PROPFILE_OPT).getArgument());
+            JMeterUtils.loadJMeterProperties(parser.getArgumentById(PROPFILE_OPT).getArgument());//加载jmeter属性
         } else {
             JMeterUtils.loadJMeterProperties(NewDriver.getJMeterDir() + File.separator
                     + "bin" + File.separator // $NON-NLS-1$
@@ -978,6 +983,7 @@ public class JMeter implements JMeterPlugin {
         driver.deleteResultFile = this.deleteResultFile;
 
         PluginManager.install(this, false);
+        //noGui
 
         String remoteHostsString = null;
         if (remoteStart != null) {
@@ -991,6 +997,7 @@ public class JMeter implements JMeterPlugin {
         if (testFile == null) {
             throw new IllegalUserActionException("Non-GUI runs require a test plan");
         }
+        //忽略上边调用的一些函数和distributed相关函数
         driver.runNonGui(testFile, logFile, remoteStart != null, remoteHostsString, generateReportDashboard);
     }
 
@@ -1070,6 +1077,7 @@ public class JMeter implements JMeterPlugin {
             List<JMeterEngine> engines = new LinkedList<>();
             println("Created the tree successfully using "+testFile);
             if (!remoteStart) {
+                //非远程
                 JMeterEngine engine = new StandardJMeterEngine();
                 clonedTree.add(clonedTree.getArray()[0], new ListenToTest(
                         org.apache.jmeter.JMeter.ListenToTest.RunMode.LOCAL, false, reportGenerator));

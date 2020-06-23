@@ -83,6 +83,7 @@ public class JMeterUIDefaults {
 
     @API(since = "5.3", status = API.Status.INTERNAL)
     public static final JMeterUIDefaults INSTANCE = new JMeterUIDefaults();
+    //定义唯一的常量instance
 
     private float scale = 1.0f;
 
@@ -98,6 +99,7 @@ public class JMeterUIDefaults {
 
     private JMeterUIDefaults() {
     }
+    //构造函数
 
     @API(since = "5.3", status = API.Status.INTERNAL)
     public void install() {

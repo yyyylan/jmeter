@@ -78,6 +78,7 @@ import com.thoughtworks.xstream.security.NoTypePermission;
  */
 public class JMeterUtils implements UnitTestManager {
     private static final Logger log = LoggerFactory.getLogger(JMeterUtils.class);
+    //LoggerFactory.getLogger 返回由name参数指定的适当的logger实例
 
     private static final String JMETER_VARS_PREFIX = "__jm__";
     public static final String THREAD_GROUP_DISTRIBUTED_PREFIX_PROPERTY_NAME = "__jm.D_TG";
@@ -206,7 +207,7 @@ public class JMeterUtils implements UnitTestManager {
                 throw new RuntimeException("Could not read JMeter properties file:" + file);
             }
         } finally {
-            JOrphanUtils.closeQuietly(is);
+            JOrphanUtils.closeQuietly(is);//关闭io流
         }
         appProperties = p;
     }

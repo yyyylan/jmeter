@@ -71,6 +71,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
      * The list is merged with the testListeners and then cleared.
      */
     private static final List<TestStateListener> testList = new ArrayList<>();
+    //list集合
 
     /** Whether to call System.exit(0) in exit after stopping RMI */
     private static final boolean REMOTE_SYSTEM_EXIT = JMeterUtils.getPropDefault("jmeterengine.remote.system.exit", false);
@@ -83,6 +84,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
 
     /** Flag to show whether test is running. Set to false to stop creating more threads. */
     private volatile boolean running = false;
+    //volatile修饰变量，添加总线锁
 
     /** Flag to show whether engine is active. Set to false at end of test. */
     private volatile boolean active = false;
@@ -99,8 +101,10 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
 
     // The list of current thread groups; may be setUp, main, or tearDown.
     private final List<AbstractThreadGroup> groups = new CopyOnWriteArrayList<>();
+    //list集合，线程组
 
     public StandardJMeterEngine() {
+        //Jmeter管理
         this(null);
     }
 
@@ -132,6 +136,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
     public static synchronized void register(TestStateListener tl) {
         testList.add(tl);
     }
+    //synchronized修饰方法
 
     public static boolean stopThread(String threadName) {
         return stopThread(threadName, false);
@@ -179,7 +184,9 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
         }
         try {
             Thread runningThread = new Thread(this, "StandardJMeterEngine");
+            //多线程实现
             runningThread.start();
+            //线程启动方式start
         } catch (Exception err) {
             stopTest();
             throw new JMeterEngineException(err);
@@ -320,6 +327,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
         public void run() {
             running = false;
             resetSingletonEngine();
+            //重置线程为null
             if (now) {
                 tellThreadGroupsToStop();
                 pause(10L * countStillActiveThreads());
@@ -342,6 +350,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
                 } // else will be done by threadFinished()
             } else {
                 stopAllThreadGroups();
+                //关闭所有线程
             }
         }
     }
@@ -362,6 +371,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
             test.traverse(compiler);
         } catch (RuntimeException e) {
             log.error("Error occurred compiling the tree:",e);
+            //获取错误日志
             JMeterUtils.reportErrorToUser("Error occurred compiling the tree: - see log file", e);
             return; // no point continuing
         }

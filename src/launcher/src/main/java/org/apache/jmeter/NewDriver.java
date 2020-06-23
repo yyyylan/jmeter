@@ -59,7 +59,7 @@ public final class NewDriver {
     private static final String JMETER_INSTALLATION_DIRECTORY;
 
     private static final List<Exception> EXCEPTIONS_IN_INIT = new ArrayList<>();
-
+//静态代码块
     static {
         final List<URL> jars = new LinkedList<>();
         final String initiaClasspath = System.getProperty(JAVA_CLASS_PATH);
@@ -85,7 +85,8 @@ public final class NewDriver {
                 tmpDir = userDir.getAbsoluteFile().getParent();
             }
         }
-        JMETER_INSTALLATION_DIRECTORY=tmpDir;
+        JMETER_INSTALLATION_DIRECTORY="D:/workspace/jmeter";
+        //JMETER_INSTALLATION_DIRECTORY=tmpDir;
 
         /*
          * Does the system support UNC paths? If so, may need to fix them up
@@ -94,11 +95,14 @@ public final class NewDriver {
         boolean usesUNC = OS_NAME_LC.startsWith("windows");// $NON-NLS-1$
 
         // Add standard jar locations to initial classpath
+
         StringBuilder classpath = new StringBuilder();
         File[] libDirs = new File[] { new File(JMETER_INSTALLATION_DIRECTORY + File.separator + "lib"),// $NON-NLS-1$ $NON-NLS-2$
                 new File(JMETER_INSTALLATION_DIRECTORY + File.separator + "lib" + File.separator + "ext"),// $NON-NLS-1$ $NON-NLS-2$
                 new File(JMETER_INSTALLATION_DIRECTORY + File.separator + "lib" + File.separator + "junit")};// $NON-NLS-1$ $NON-NLS-2$
-        for (File libDir : libDirs) {
+    //通过JMETER_INSTALLATION_DIRECTORY读取到jar文件，通过jar文件创建classloader
+    for (File libDir : libDirs) {
+            //listFiles返回一个抽象路径名数组，该数组表示该抽象路径名表示的满足指定过滤器的目录中的文件和目录。
             File[] libJars = libDir.listFiles((dir, name) -> name.endsWith(".jar"));
             if (libJars == null) {
                 new Throwable("Could not access " + libDir).printStackTrace(); // NOSONAR No logging here
@@ -133,7 +137,7 @@ public final class NewDriver {
                 (PrivilegedAction<DynamicClassLoader>) () ->
                         new DynamicClassLoader(jars.toArray(new URL[jars.size()]))
         );
-    }
+    }//静态初始化完成
 
     /**
      * Prevent instantiation.
@@ -246,8 +250,10 @@ public final class NewDriver {
                 if(System.getProperty(HEADLESS_MODE_PROPERTY) == null && shouldBeHeadless(args)) {
                     System.setProperty(HEADLESS_MODE_PROPERTY, "true");
                 }
+                //loadClass加载类org.apache.jmeter.JMeter
                 Class<?> initialClass = loader.loadClass("org.apache.jmeter.JMeter");// $NON-NLS-1$
                 Object instance = initialClass.getDeclaredConstructor().newInstance();
+                //通过java的反射方式调用org.apache.jmeter.JMeter中的start方法，完成jmeter的启动
                 Method startup = initialClass.getMethod("start", new Class[] { new String[0].getClass() });// $NON-NLS-1$
                 startup.invoke(instance, new Object[] { args });
             } catch(Throwable e){ // NOSONAR We want to log home directory in case of exception
@@ -345,7 +351,8 @@ public final class NewDriver {
 
             final Date date = new Date();
             int fromIndex = 0;
-            int begin = fileName.indexOf('\'', fromIndex);// $NON-NLS-1$
+            int begin = fileName.indexOf('\'', fromIndex);
+            // $NON-NLS-1$
             int end;
 
             String format;

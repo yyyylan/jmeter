@@ -44,6 +44,7 @@ public final class PluginManager {
      */
     public static void install(JMeterPlugin plugin, boolean useGui) {
         if (useGui) {
+            //使用gui模式
             instance.installPlugin(plugin);
         }
     }

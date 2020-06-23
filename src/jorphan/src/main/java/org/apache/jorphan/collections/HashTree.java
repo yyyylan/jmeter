@@ -47,6 +47,7 @@ import java.util.Set;
  * @see SearchByClass
  */
 public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable {
+    //Jmeter hashTree方法，实现接口，Serializable仅为标记接口不包含任何的方法定义，表示类可以序列化
 
     private static final long serialVersionUID = 240L;
 
@@ -58,6 +59,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
 
     /**
      * Creates an empty new HashTree.
+     * 创建空的HashTree，实际调用HashTree（null，null）
      */
     public HashTree() {
         this(null, null);
@@ -65,6 +67,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
 
     /**
      * Allow subclasses to provide their own Map.
+     * 允许子类提供map
      * @param _map {@link Map} to use
      */
     protected HashTree(Map<Object, HashTree> _map) {
@@ -74,6 +77,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
     /**
      * Creates a new HashTree and adds the given object as a top-level node.
      *
+     * 创建HashTree并将key设为top-level节点
      * @param key
      *            name of the new top-level node
      */
@@ -84,7 +88,8 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
     /**
      * Uses the new HashTree if not null and adds the given object as a
      * top-level node if not null
-     *
+     *如果HashTree不为null，则使用HashTree
+     * 若key不为空则把对象作为top-level节点，也可能为空
      * @param _map
      *            the map to be used. If <code>null</code> a new {@link HashMap}
      *            will be created
@@ -97,6 +102,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
             data = _map;
         } else {
             data = new HashMap<>();
+            //创建新的HashMap
         }
         if(key != null) {
             data.put(key, new HashTree());
@@ -108,12 +114,15 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      * UnsupportedOperationException is thrown. If it is a HashTree, this is
      * like calling the add(HashTree) method.
      *
+     * 提供的map必须是HashTree类型，否则会抛出异常。如果是HashTree就相当于调用add（HashTree）方法
+     *
      * @see #add(HashTree)
      * @see java.util.Map#putAll(Map)
      */
     @Override
     public void putAll(Map<?, ? extends HashTree> map) {
         if (map instanceof HashTree) {
+            //返回Boolean类型
             this.add((HashTree) map);
         } else {
             throw new UnsupportedOperationException("can only putAll other HashTree objects");
@@ -134,6 +143,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      * Implemented as required by the Map interface, but is not very useful
      * here. All 'values' in a HashTree are HashTree's themselves.
      *
+     *是否包含值，此函数并无多大作用，实际上调用的map的containsValue
      * @param value
      *            Object to be tested as a value.
      * @return True if the HashTree contains the value, false otherwise.
@@ -147,6 +157,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
     /**
      * This is the same as calling HashTree.add(key,value).
      *
+     * 与HashTree.add(key,value)类似
      * @param key
      *            to use
      * @param value
@@ -184,12 +195,14 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      * Adds a key as a node at the current level and then adds the given
      * HashTree to that new node.
      *
+     * 在当前的level作为节点添加key，然后把HashTree添加在新的节点上
+     *
      * @param key
      *            key to create in this tree
      * @param subTree
      *            sub tree to add to the node created for the first argument.
      */
-    public void add(Object key, HashTree subTree) {
+        public void add(Object key, HashTree subTree) {
         add(key).add(subTree);
     }
 
@@ -208,6 +221,8 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
     /**
      * Creates a new HashTree and adds all the objects in the given collection
      * as top-level nodes in the tree.
+     *
+     * 创建HashTree并将所有对象设置为top-level节点
      *
      * @param keys
      *            a collection of objects to be added to the created HashTree.
@@ -409,6 +424,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      * Adds an key into the HashTree at the current level. If a HashTree exists
      * for the key already, no new tree will be added
      *
+     * 如果key已经存在，不会添加新tree
      * @param key
      *            key to be added to HashTree
      * @return newly generated tree, if no tree was found for the given key;
@@ -416,6 +432,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      */
     public HashTree add(Object key) {
         if (!data.containsKey(key)) {
+            //不包含key
             HashTree newTree = createNewTree();
             data.put(key, newTree);
             return newTree;
@@ -636,6 +653,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
         HashTree newTree = new HashTree();
         cloneTree(newTree);
         return newTree;
+        //深拷贝
     }
 
     protected void cloneTree(HashTree newTree) {
@@ -712,6 +730,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      */
     public Collection<Object> list() {
         return data.keySet();
+        //返回dat中所包含的键的set视图
     }
 
     /**
@@ -719,7 +738,8 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      * current HashTree object (in other words, one level down. If the HashTree
      * represented a file system, this would like getting a list of all files in
      * a sub-directory (of the current directory) specified by the key argument.
-     *
+     *返回提供的key对应的当前HashTree所有的set（或者说，一个子节点。如果hashTree表示文件，这个方法就是获取所有文件
+     * 的子目录）由这个key指定
      * @param key
      *            key used to find HashTree to get list of
      * @return Set of all keys in found HashTree.
@@ -731,10 +751,9 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
         }
         return new HashSet<>();
     }
-
     /**
      * Removes the entire branch specified by the given key.
-     *
+     *删除给定key指定所有分支
      * @see java.util.Map#remove(Object)
      */
     @Override
@@ -748,7 +767,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      * end of the recursion. If the HashTree represented a file system, this
      * would be like getting a list of all the files in a directory specified by
      * the treePath, relative from the current directory.
-     *
+     *在key数组中使用每个后续key递归到HashTree结构，递归结束后，返回HashTree对象的key集合
      * @param treePath
      *            Array of keys used to recurse into HashTree structure
      * @return Set of all keys found in end HashTree
@@ -757,6 +776,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
         if (treePath != null) {
             return list(Arrays.asList(treePath));
         }
+        //Arrays.asList 返回指定数组支持的固定大小的列表
         return list();
     }
 
@@ -796,7 +816,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      * Gets an array of all keys in the current HashTree node. If the HashTree
      * represented a file system, this would be like getting an array of all the
      * files in the current folder.
-     *
+     *获取当前HashTree节点所有的key
      * @return array of all keys in this HashTree.
      */
     public Object[] getArray() {
@@ -868,7 +888,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
 
     /**
      * Returns a hashcode for this HashTree.
-     *
+     *返回这个HashTree的HashCode
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -880,7 +900,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      * Compares all objects in the tree and verifies that the two trees contain
      * the same objects at the same tree levels. Returns true if they do, false
      * otherwise.
-     *
+     *比较tree上所有的objects，如果两个tree在相同level上包含的相同的object，返回true否则返回false
      * @param o
      *            Object to be compared against
      * @see java.lang.Object#equals(Object)
@@ -917,6 +937,7 @@ public class HashTree implements Serializable, Map<Object, HashTree>, Cloneable 
      * @return HashTree mapped to key, if found, otherwise <code>null</code>
      */
     public HashTree search(Object key) {
+        //在hashRTree结构中搜索给定的key
         HashTree result = getTree(key);
         if (result != null) {
             return result;
