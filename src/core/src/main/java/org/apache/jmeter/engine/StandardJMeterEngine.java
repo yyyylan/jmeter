@@ -51,11 +51,13 @@ import org.slf4j.LoggerFactory;
  * Runs JMeter tests, either directly for local GUI and non-GUI invocations,
  * or started by {@link RemoteJMeterEngineImpl} when running in server mode.
  */
+//实现接口Runnable，standardJmeterEngine为多线程
 public class StandardJMeterEngine implements JMeterEngine, Runnable {
-
+    //获取log
     private static final Logger log = LoggerFactory.getLogger(StandardJMeterEngine.class);
 
     // Should we exit at end of the test? (only applies to server, because host is non-null)
+    //测试为空的时候是否退出（仅适用于服务器，因为host非空）
     private static final boolean EXIT_AFTER_TEST =
         JMeterUtils.getPropDefault("server.exitaftertest", false);  // $NON-NLS-1$
 
@@ -70,6 +72,11 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
      * Only used by the function parser so far.
      * The list is merged with the testListeners and then cleared.
      */
+    /*
+    * 允许功能等注册testStopped通知
+    *到目前为止，仅有函数解析器使用
+    * 这个list与testListeners合并，然后清除
+    * */
     private static final List<TestStateListener> testList = new ArrayList<>();
     //list集合
 
@@ -98,6 +105,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
     private HashTree test;
 
     private final String host;
+    //私有，final修饰引用类型变量
 
     // The list of current thread groups; may be setUp, main, or tearDown.
     private final List<AbstractThreadGroup> groups = new CopyOnWriteArrayList<>();
@@ -105,12 +113,14 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
 
     public StandardJMeterEngine() {
         //Jmeter管理
+        //初始化host
         this(null);
     }
 
     public StandardJMeterEngine(String host) {
         this.host = host;
         // Hack to allow external control
+        //入侵已允许外部控制
         initSingletonEngine(this);
     }
     /**
@@ -122,7 +132,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
     }
 
     public static void stopEngineNow() {
-        if (engine != null) {// May be null if called from Unit test
+        if (engine != null) {// May be null if called from Unit test  如果从单元测试调用，可能为空
             engine.stopTest(true);
         }
     }
@@ -258,6 +268,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
 
     @Override
     public synchronized void stopTest(boolean now) {
+        //新线程
         Thread stopThread = new Thread(new StopTest(now));
         stopThread.start();
     }
@@ -362,6 +373,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
 
         /*
          * Ensure that the sample variables are correctly initialised for each run.
+         *确保每次运行时，都正确初始化样本变量
          */
         SampleEvent.initSampleVariables();
 
@@ -372,14 +384,16 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
         } catch (RuntimeException e) {
             log.error("Error occurred compiling the tree:",e);
             //获取错误日志
-            JMeterUtils.reportErrorToUser("Error occurred compiling the tree: - see log file", e);
+                JMeterUtils.reportErrorToUser("Error occurred compiling the tree: - see log file", e);
             return; // no point continuing
         }
         /**
          * Notification of test listeners needs to happen after function
          * replacement, but before setting RunningVersion to true.
+         *测试监听器的通知需在函数变化后，但要在将RunningVersion设置为true之前
          */
-        SearchByClass<TestStateListener> testListeners = new SearchByClass<>(TestStateListener.class); // TL - S&E
+        SearchByClass<TestStateListener> testListeners = new SearchByClass<>(TestStateListener.class);
+        // TL - S&E
         test.traverse(testListeners);
 
         // Merge in any additional test listeners
@@ -408,6 +422,7 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
         Iterator<SetupThreadGroup> setupIter = setupSearcher.getSearchResults().iterator();
         Iterator<AbstractThreadGroup> iter = searcher.getSearchResults().iterator();
         Iterator<PostThreadGroup> postIter = postSearcher.getSearchResults().iterator();
+        //iterator迭代器泛型
 
         ListenerNotifier notifier = new ListenerNotifier();
 
@@ -442,12 +457,15 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
          * Here's where the test really starts. Run a Full GC now: it's no harm
          * at all (just delays test start by a tiny amount) and hitting one too
          * early in the test can impair results for short tests.
+         * 这才是测试真正开始的地方。现在运行GC：完成没有伤害（只是将测试延迟一下下）在测试过程中过早打击，可能对于短测试运行太早，会在损害短期测试的结果
          */
         JMeterUtils.helpGC();
 
         JMeterContextService.getContext().setSamplingStarted(true);
-        boolean mainGroups = running; // still running at this point, i.e. setUp was not cancelled
-        while (running && iter.hasNext()) {// for each thread group
+        boolean mainGroups = running;
+        // still running at this point, i.e. setUp was not cancelled
+        while (running && iter.hasNext()) {
+            // for each thread group
             AbstractThreadGroup group = iter.next();
             //ignore Setup and Post here.  We could have filtered the searcher. but then
             //future Thread Group objects wouldn't execute.
@@ -482,10 +500,14 @@ public class StandardJMeterEngine implements JMeterEngine, Runnable {
             groupCount = 0;
             JMeterContextService.clearTotalThreads();
             log.info("Starting tearDown thread groups");
-            if (mainGroups && !running) { // i.e. shutdown/stopped during main thread groups
-                running = tearDownOnShutdown; // re-enable for tearDown if necessary
+            if (mainGroups && !running) {
+                // i.e. shutdown/stopped during main thread groups
+                running = tearDownOnShutdown;
+                // re-enable for tearDown if necessary
             }
-            while (running && postIter.hasNext()) {//for each setup thread group
+            while (running && postIter.hasNext()) {
+                //for each setup thread group
+                //取迭代器中下一个
                 AbstractThreadGroup group = postIter.next();
                 groupCount++;
                 String groupName = group.getName();

@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Class that implements the Loop Controller, ie iterate infinitely or a configured number of times
+ * 类实现循环控制器，即无线迭代或者配置的次数
  */
 public class LoopController extends GenericController implements Serializable, IteratingController, LoopIterationListener {
 
@@ -101,7 +102,7 @@ public class LoopController extends GenericController implements Serializable, I
 
     /**
      * Determines whether the loop will return any samples if it is rerun.
-     *
+     *确定循环是否返回样本如果有返回
      * @param forever
      *            true if the loop must be reset after ending a run
      */

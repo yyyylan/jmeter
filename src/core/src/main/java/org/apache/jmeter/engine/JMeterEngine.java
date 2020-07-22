@@ -23,6 +23,7 @@ import org.apache.jorphan.collections.HashTree;
 
 /**
  * This interface is implemented by classes that can run JMeter tests.
+ * 这个借口可以由jmeter测试类实现
  */
 public interface JMeterEngine {
     /**
@@ -39,6 +40,7 @@ public interface JMeterEngine {
 
     /**
      * Stop test immediately interrupting current samplers
+     *停止测试立即中断当前采样器
      */
     default void stopTest() {
         stopTest(true);
@@ -46,11 +48,13 @@ public interface JMeterEngine {
     /**
      *
      * @param now boolean that tell whether stop is immediate (interrupt) or not (wait for current sample end)
+     *            布尔类型觉定是否立即停止或是等待当前采样器结束后停止
      */
     void stopTest(boolean now);
 
     /**
      * Stop test if running
+     * 如果正在运行请停止测试
      */
     void reset();
 
@@ -67,6 +71,7 @@ public interface JMeterEngine {
 
     /**
      * @return boolean Flag to show whether engine is active (true when test is running). Set to false at end of test
+     * 布尔类型显示引擎是否处于活跃状态（当测试运行时为true）测试结束时设置为false
      */
     boolean isActive();
 }

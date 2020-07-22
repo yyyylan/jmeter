@@ -37,8 +37,9 @@ import org.apache.jorphan.collections.ListedHashTree;
 
 /**
  * ThreadGroup holds the settings for a JMeter thread group.
- *
+ *ThreadGroup保存jmeter线程组的设置
  * This class is intended to be ThreadSafe.
+ * 这个类旨在用作线程安全
  */
 public abstract class AbstractThreadGroup extends AbstractTestElement
     implements Serializable, Controller, JMeterThreadMonitor, TestCompilerHelper {
@@ -46,6 +47,7 @@ public abstract class AbstractThreadGroup extends AbstractTestElement
     private static final long serialVersionUID = 240L;
 
     // Only create the map if it is required
+    //仅在需要时创建map，ConcurrentMap线程安全
     private final transient ConcurrentMap<TestElement, Object> children = new ConcurrentHashMap<>();
 
     private static final Object DUMMY = new Object();
@@ -77,7 +79,8 @@ public abstract class AbstractThreadGroup extends AbstractTestElement
     public static final String IS_SAME_USER_ON_NEXT_ITERATION = "ThreadGroup.same_user_on_next_iteration";
 
 
-    private final AtomicInteger numberOfThreads = new AtomicInteger(0); // Number of active threads in this group
+    private final AtomicInteger numberOfThreads = new AtomicInteger(0);
+    // Number of active threads in this group
 
     /** {@inheritDoc} */
     @Override
@@ -93,7 +96,7 @@ public abstract class AbstractThreadGroup extends AbstractTestElement
 
     /**
      * Get the sampler controller.
-     *
+     *获取采样器控制器
      * @return the sampler controller.
      */
     public Controller getSamplerController() {
@@ -113,7 +116,7 @@ public abstract class AbstractThreadGroup extends AbstractTestElement
 
     /**
      * Add a test element.
-     *
+     *添加测试元素
      * @param child
      *            the test element to add.
      */

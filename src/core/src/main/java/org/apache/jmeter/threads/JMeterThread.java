@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The JMeter interface to the sampling process, allowing JMeter to see the
  * timing, add listeners for sampling events and to stop the sampling process.
+ * jmeter采样过程的接口，允许Jmeter查看时序，为采样事件添加监听器和停止采样进程
  */
 public class JMeterThread implements Runnable, Interruptible {
     private static final Logger log = LoggerFactory.getLogger(JMeterThread.class);

@@ -22,6 +22,7 @@ import org.apache.jmeter.util.JMeterUtils;
 /**
  * Provides context service for JMeter threads.
  * Keeps track of active and total thread counts.
+ * 跟踪活活动和线程总数目
  */
 public final class JMeterContextService {
     private static final ThreadLocal<JMeterContext> threadContext = ThreadLocal.withInitial(JMeterContext::new);

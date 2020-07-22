@@ -23,6 +23,7 @@ import org.apache.jmeter.testelement.TestElement;
 
 /**
  * This interface is used by JMeterThread in the following manner:
+ * JmeterThread通过以下方式使用此接口
  * <p>
  * <code>while (running &amp;&amp; (sampler = controller.next()) != null)</code>
  */

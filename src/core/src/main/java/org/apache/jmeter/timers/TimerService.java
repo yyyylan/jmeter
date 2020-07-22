@@ -22,6 +22,7 @@ import org.apache.jmeter.threads.JMeterThread;
 
 /**
  * Manages logic related to timers and pauses
+ * 管理与计时器和暂停有关的逻辑
  * @since 3.2
  */
 public class TimerService {
